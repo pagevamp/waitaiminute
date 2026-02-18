@@ -1,0 +1,48 @@
+.waitaiminute-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  margin: 4px 0;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+
+  /* Light mode (default) */
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  border: 1px solid #f59e0b33;
+}
+
+.waitaiminute-text {
+  transition: opacity 0.3s ease;
+  opacity: 1;
+  text-align: center;
+}
+
+.waitaiminute-text.waitaiminute-fade-out {
+  opacity: 0;
+}
+
+/* Dark mode via media query */
+@media (prefers-color-scheme: dark) {
+  .waitaiminute-banner {
+    background: linear-gradient(135deg, #451a03, #78350f);
+    color: #fde68a;
+    border-color: #b4540033;
+  }
+}
+
+/* Dark mode via class-based detection (AI tools often use these) */
+html.dark .waitaiminute-banner,
+html[data-theme="dark"] .waitaiminute-banner,
+body.dark .waitaiminute-banner,
+[data-mode="dark"] .waitaiminute-banner,
+.dark .waitaiminute-banner {
+  background: linear-gradient(135deg, #451a03, #78350f);
+  color: #fde68a;
+  border-color: #b4540033;
+}
