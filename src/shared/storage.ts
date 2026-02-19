@@ -1,8 +1,14 @@
 export interface Settings {
   enabled: boolean;
+  messagesEnabled: boolean;
+  sensitiveInfoEnabled: boolean;
 }
 
-const DEFAULTS: Settings = { enabled: true };
+const DEFAULTS: Settings = {
+  enabled: true,
+  messagesEnabled: true,
+  sensitiveInfoEnabled: true,
+};
 
 export async function getSettings(): Promise<Settings> {
   const result = await chrome.storage.sync.get(DEFAULTS);

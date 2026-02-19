@@ -34,8 +34,12 @@ function handleInput(config: SiteConfig, input: Element): void {
   }, DEBOUNCE_MS);
 }
 
+export function isMonitoring(): boolean {
+  return abortController !== null;
+}
+
 export function startMonitoring(config: SiteConfig): void {
-  stopMonitoring();
+  if (isMonitoring()) return;
 
   const input = findInput(config);
   if (!input) return;

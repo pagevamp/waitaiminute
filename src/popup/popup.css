@@ -84,6 +84,44 @@ input:checked + .slider::before {
   transform: translateX(20px);
 }
 
+/* Sub-toggles */
+.sub-toggles {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sub-toggles.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.sub-toggle-row {
+  padding-left: 8px;
+}
+
+.sub-label {
+  font-size: 12px;
+  color: #555;
+}
+
+.toggle-sm {
+  width: 36px;
+  height: 20px;
+}
+
+.toggle-sm .slider::before {
+  height: 14px;
+  width: 14px;
+}
+
+.toggle-sm input:checked + .slider::before {
+  transform: translateX(16px);
+}
+
 /* Dark mode for popup */
 @media (prefers-color-scheme: dark) {
   body {
@@ -97,5 +135,13 @@ input:checked + .slider::before {
 
   .slider {
     background-color: #444;
+  }
+
+  .sub-toggles {
+    border-top-color: #333;
+  }
+
+  .sub-label {
+    color: #999;
   }
 }
