@@ -6,6 +6,7 @@ import {
   updateBannerMessage,
 } from "./injector";
 import { startRotation, stopRotation } from "./rotation";
+import { startMonitoring, stopMonitoring } from "./input-monitor";
 
 const FALLBACK_INTERVAL = 2_000; // 2 seconds
 
@@ -23,6 +24,7 @@ export function startObserving(config: SiteConfig): void {
         stopRotationFn = startRotation((message) => {
           updateBannerMessage(message);
         });
+        startMonitoring(config);
       }
     }
   };
@@ -53,6 +55,7 @@ export function stopObserving(): void {
     clearInterval(fallbackTimer);
     fallbackTimer = null;
   }
+  stopMonitoring();
   if (stopRotationFn) {
     stopRotationFn();
     stopRotationFn = null;

@@ -3,6 +3,7 @@ import { isEnabled } from "../shared/storage";
 import { getSiteConfig } from "./sites";
 import { startObserving, stopObserving } from "./observer";
 import { removeBanner } from "./injector";
+import { removeWarning } from "./warning";
 
 async function init() {
   const hostname = window.location.hostname;
@@ -23,6 +24,7 @@ async function init() {
       } else {
         stopObserving();
         removeBanner();
+        removeWarning();
       }
     }
   });

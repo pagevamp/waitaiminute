@@ -46,3 +46,51 @@ body.dark .waitaiminute-banner,
   color: #fde68a;
   border-color: #b4540033;
 }
+
+/* Warning banner */
+.waitaiminute-warning {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  margin: 4px 0;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  z-index: 9999;
+
+  /* Light mode (default) */
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #991b1b;
+  border: 1px solid #ef444433;
+}
+
+.waitaiminute-warning-icon {
+  margin-right: 8px;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.waitaiminute-warning-text {
+  flex: 1;
+}
+
+/* Warning dark mode via media query */
+@media (prefers-color-scheme: dark) {
+  .waitaiminute-warning {
+    background: linear-gradient(135deg, #450a0a, #7f1d1d);
+    color: #fecaca;
+    border-color: #dc262633;
+  }
+}
+
+/* Warning dark mode via class-based detection */
+html.dark .waitaiminute-warning,
+html[data-theme="dark"] .waitaiminute-warning,
+body.dark .waitaiminute-warning,
+[data-mode="dark"] .waitaiminute-warning,
+.dark .waitaiminute-warning {
+  background: linear-gradient(135deg, #450a0a, #7f1d1d);
+  color: #fecaca;
+  border-color: #dc262633;
+}
