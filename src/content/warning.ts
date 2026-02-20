@@ -42,7 +42,7 @@ export function updateWarning(matches: SensitiveMatch[]): void {
   if (!text) return;
 
   const details = matches.map((m) => `${m.type} (${m.match})`).join(", ");
-  text.textContent = `Sensitive info detected: ${details}`;
+  text.textContent = `Potential sensitive info detected: ${details}`;
 }
 
 export function injectWarning(config: SiteConfig, input: Element): void {

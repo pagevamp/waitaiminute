@@ -5,6 +5,7 @@ import { injectWarning, updateWarning, removeWarning, warningExists } from "./wa
 
 let abortController: AbortController | null = null;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+let monitoredInput: Element | null = null;
 
 const DEBOUNCE_MS = 300;
 
@@ -38,12 +39,28 @@ export function isMonitoring(): boolean {
   return abortController !== null;
 }
 
+function isInputStale(config: SiteConfig): boolean {
+  if (!monitoredInput) return true;
+  // Element removed from DOM
+  if (!monitoredInput.isConnected) return true;
+  // A different input is now the primary match
+  const current = findInput(config);
+  return current !== monitoredInput;
+}
+
 export function startMonitoring(config: SiteConfig): void {
-  if (isMonitoring()) return;
+  if (isMonitoring() && !isInputStale(config)) return;
+
+  // Tear down stale listeners without removing warning (re-attaching)
+  if (abortController) {
+    abortController.abort();
+    abortController = null;
+  }
 
   const input = findInput(config);
   if (!input) return;
 
+  monitoredInput = input;
   abortController = new AbortController();
   const { signal } = abortController;
 
@@ -62,5 +79,6 @@ export function stopMonitoring(): void {
     clearTimeout(debounceTimer);
     debounceTimer = null;
   }
+  monitoredInput = null;
   removeWarning();
 }

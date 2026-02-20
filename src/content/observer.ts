@@ -7,7 +7,7 @@ import {
   updateBannerMessage,
 } from "./injector";
 import { startRotation, stopRotation } from "./rotation";
-import { startMonitoring, stopMonitoring, isMonitoring } from "./input-monitor";
+import { startMonitoring, stopMonitoring } from "./input-monitor";
 
 export interface FeatureFlags {
   messages: boolean;
@@ -35,7 +35,7 @@ export function startObserving(config: SiteConfig, flags?: FeatureFlags): void {
       }
     }
 
-    if (currentFlags.sensitiveInfo && !isMonitoring() && findInput(config)) {
+    if (currentFlags.sensitiveInfo && findInput(config)) {
       startMonitoring(config);
     }
   };
@@ -80,7 +80,7 @@ export function updateFeatures(config: SiteConfig, flags: FeatureFlags): void {
   // Handle sensitive info toggle
   if (!flags.sensitiveInfo) {
     stopMonitoring();
-  } else if (!isMonitoring() && findInput(config)) {
+  } else if (findInput(config)) {
     startMonitoring(config);
   }
 }
