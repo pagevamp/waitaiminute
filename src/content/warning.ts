@@ -17,10 +17,38 @@ export function removeWarning(): void {
   if (warning) warning.remove();
 }
 
+function isDarkBackground(): boolean {
+  // Check computed background on body, then html
+  for (const el of [document.body, document.documentElement]) {
+    const bg = getComputedStyle(el).backgroundColor;
+    const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+    if (!match) continue;
+    const [, rs, gs, bs, as] = match;
+    const a = as !== undefined ? parseFloat(as) : 1;
+    if (a < 0.1) continue; // transparent, try next element
+    const luminance =
+      (0.299 * Number(rs) + 0.587 * Number(gs) + 0.114 * Number(bs)) / 255;
+    return luminance < 0.5;
+  }
+  // Fall back to class-based detection
+  const html = document.documentElement;
+  if (
+    html.classList.contains("dark") ||
+    html.getAttribute("data-theme") === "dark" ||
+    document.body.classList.contains("dark")
+  )
+    return true;
+  return false;
+}
+
 function createWarningElement(): HTMLElement {
   const warning = document.createElement("div");
   warning.setAttribute(WARNING_ATTR, "true");
   warning.className = "waitaiminute-warning";
+  const dark = isDarkBackground();
+  warning.style.color = dark ? "#fca5a5" : "#7f1d1d";
+  warning.style.background = dark ? "#450a0a" : "#fee2e2";
+  warning.style.border = dark ? "1px solid #7f1d1d33" : "1px solid #ef444433";
 
   const icon = document.createElement("span");
   icon.className = "waitaiminute-warning-icon";
