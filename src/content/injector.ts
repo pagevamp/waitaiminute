@@ -29,6 +29,11 @@ function createBannerElement(): HTMLElement {
   banner.setAttribute(BANNER_ATTR, "true");
   banner.className = "waitaiminute-banner";
 
+  const icon = document.createElement("span");
+  icon.className = "waitaiminute-icon";
+  icon.textContent = "\u270B";
+  banner.appendChild(icon);
+
   const text = document.createElement("span");
   text.className = "waitaiminute-text";
   text.textContent = getRandomMessage();
