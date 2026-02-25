@@ -17,7 +17,7 @@ A Chrome extension that displays gentle ethical AI use reminders above text inpu
 - Rotating reminder messages above AI input fields (30s rotation with fade transitions)
 - Sensitive content detection warnings
 - Enable/disable toggle via popup
-- Settings sync across devices via Chrome Sync storage
+- Settings persist across sessions
 - Zero runtime dependencies — vanilla TypeScript only
 
 ## Installation
