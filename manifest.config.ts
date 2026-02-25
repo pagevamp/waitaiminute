@@ -4,7 +4,7 @@ export default defineManifest({
   manifest_version: 3,
   name: "WaitAIMinute",
   description:
-    "Gentle reminders to think before prompting — displays ethical AI use messages on AI tool websites.",
+    "Gentle reminders to think before prompting. Displays ethical AI use messages on AI tool websites.",
   version: "1.0.0",
   icons: {
     "16": "src/assets/icon-16.png",

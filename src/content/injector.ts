@@ -2,6 +2,35 @@ import { SiteConfig } from "./sites/types";
 import { getRandomMessage } from "./rotation";
 
 const BANNER_ATTR = "data-waitaiminute-banner";
+const TYPING_SPEED = 30; // ms per character
+
+let typingTimer: ReturnType<typeof setTimeout> | null = null;
+
+function cancelTyping(): void {
+  if (typingTimer !== null) {
+    clearTimeout(typingTimer);
+    typingTimer = null;
+  }
+}
+
+function typeText(el: Element, message: string): void {
+  cancelTyping();
+  el.textContent = "";
+  el.classList.add("waitaiminute-typing");
+
+  let i = 0;
+  function tick() {
+    if (i < message.length) {
+      el.textContent = message.slice(0, i + 1);
+      i++;
+      typingTimer = setTimeout(tick, TYPING_SPEED);
+    } else {
+      typingTimer = null;
+      el.classList.remove("waitaiminute-typing");
+    }
+  }
+  tick();
+}
 
 export function findInput(config: SiteConfig): Element | null {
   for (const selector of config.inputSelectors) {
@@ -20,8 +49,41 @@ export function getBanner(): HTMLElement | null {
 }
 
 export function removeBanner(): void {
+  cancelTyping();
   const banner = getBanner();
   if (banner) banner.remove();
+}
+
+function parseLuminance(color: string): number | null {
+  const m = color.match(/\d+/g);
+  if (!m || m.length < 3) return null;
+  return (0.299 * Number(m[0]) + 0.587 * Number(m[1]) + 0.114 * Number(m[2])) / 255;
+}
+
+function applyOpaqueBackground(banner: HTMLElement): void {
+  // Use the inherited text color to determine if the theme is dark or light
+  const textLum = parseLuminance(getComputedStyle(banner).color);
+  if (textLum === null) return;
+  const expectLightBg = textLum < 0.5; // dark text → light background
+
+  // Walk up to find the first ancestor bg that matches the expected theme
+  let el: Element | null = banner.parentElement;
+  while (el) {
+    const bg = getComputedStyle(el).backgroundColor;
+    if (bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)") {
+      const bgLum = parseLuminance(bg);
+      if (bgLum !== null && (bgLum > 0.5) === expectLightBg) {
+        banner.style.backgroundColor = bg;
+        return;
+      }
+    }
+    el = el.parentElement;
+  }
+
+  // Fallback: generic theme-appropriate background
+  banner.style.backgroundColor = expectLightBg
+    ? "rgb(255, 255, 255)"
+    : "rgb(32, 33, 35)";
 }
 
 function createBannerElement(): HTMLElement {
@@ -36,8 +98,9 @@ function createBannerElement(): HTMLElement {
 
   const text = document.createElement("span");
   text.className = "waitaiminute-text";
-  text.textContent = getRandomMessage();
   banner.appendChild(text);
+
+  typeText(text, getRandomMessage());
 
   return banner;
 }
@@ -92,6 +155,7 @@ function injectAutoDetectBanner(config: SiteConfig): HTMLElement | null {
 
   const banner = createBannerElement();
   insertBannerRelativeTo(banner, ancestor, position);
+  applyOpaqueBackground(banner);
 
   return banner;
 }
@@ -118,6 +182,7 @@ function injectDomBanner(config: SiteConfig): HTMLElement | null {
 
   const banner = createBannerElement();
   insertBannerRelativeTo(banner, container, config.insertPosition ?? "before");
+  applyOpaqueBackground(banner);
 
   return banner;
 }
@@ -138,9 +203,10 @@ export function updateBannerMessage(message: string): void {
   const text = banner.querySelector(".waitaiminute-text");
   if (!text) return;
 
+  cancelTyping();
   text.classList.add("waitaiminute-fade-out");
   setTimeout(() => {
-    text.textContent = message;
     text.classList.remove("waitaiminute-fade-out");
+    typeText(text, message);
   }, 300);
 }

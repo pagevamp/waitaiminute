@@ -31,6 +31,15 @@
   opacity: 0;
 }
 
+.waitaiminute-text.waitaiminute-typing::after {
+  content: "|";
+  animation: waitaiminute-blink 0.7s step-end infinite;
+}
+
+@keyframes waitaiminute-blink {
+  50% { opacity: 0; }
+}
+
 
 /* Warning banner */
 .waitaiminute-warning {
