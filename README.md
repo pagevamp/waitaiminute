@@ -30,7 +30,7 @@ Coming soon.
 
 1. Clone the repo
    ```bash
-   git clone https://github.com/sajxraj/waitaiminute.git
+   git clone https://github.com/pagevamp/waitaiminute.git
    cd waitaiminute
    ```
 2. Install dependencies and build
