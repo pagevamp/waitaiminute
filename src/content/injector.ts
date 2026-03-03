@@ -1,5 +1,6 @@
 import { SiteConfig } from "./sites/types";
 import { getRandomMessage } from "./rotation";
+import { getSubmitCounts, getTodayTotal } from "../shared/counter-storage";
 
 const BANNER_ATTR = "data-waitaiminute-banner";
 const TYPING_SPEED = 30; // ms per character
@@ -100,19 +101,124 @@ function applyDailyTheme(banner: HTMLElement): void {
   banner.style.borderColor = colors.border;
 }
 
+interface DependencyStage {
+  max: number;
+  emoji: string;
+  label: string;
+  intensity: number; // 0 = theme color, 1 = full warning red
+}
+
+const STAGES: DependencyStage[] = [
+  { max: 0,  emoji: "\u{1F977}", label: "Ninja",              intensity: 0 },
+  { max: 2,  emoji: "\u{1F9E0}", label: "Self-Reliant",       intensity: 0.15 },
+  { max: 4,  emoji: "\u2696\uFE0F", label: "Balanced",        intensity: 0.35 },
+  { max: 6,  emoji: "\u{1F91D}", label: "Getting Cozy",       intensity: 0.55 },
+  { max: 8,  emoji: "\u{1FAA2}", label: "Attached",           intensity: 0.75 },
+  { max: 10, emoji: "\u{1FAE3}", label: "Overly Dependent",   intensity: 0.9 },
+  { max: Infinity, emoji: "\u{1F6A8}", label: "AI Addict",    intensity: 1 },
+];
+
+function getStage(count: number): DependencyStage {
+  return STAGES.find((s) => count <= s.max) ?? STAGES[STAGES.length - 1];
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.replace("#", "");
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+}
+
+function lerpColor(a: [number, number, number], b: [number, number, number], t: number): string {
+  const r = Math.round(a[0] + (b[0] - a[0]) * t);
+  const g = Math.round(a[1] + (b[1] - a[1]) * t);
+  const bl = Math.round(a[2] + (b[2] - a[2]) * t);
+  return `rgb(${r}, ${g}, ${bl})`;
+}
+
+function getStageFillColor(intensity: number): string {
+  const theme = THEMES[getDayOfYear() % THEMES.length];
+  const colors = isDarkMode() ? theme.dark : theme.light;
+  const themeRgb = hexToRgb(colors.text);
+  const warnRgb: [number, number, number] = isDarkMode() ? [248, 113, 113] : [220, 38, 38];
+  return lerpColor(themeRgb, warnRgb, intensity);
+}
+
+const PROGRESS_MAX = 10;
+
+function createProgressBar(): HTMLElement {
+  const wrapper = document.createElement("div");
+  wrapper.className = "waitaiminute-progress";
+
+  const barTrack = document.createElement("div");
+  barTrack.className = "waitaiminute-progress-track";
+
+  const barFill = document.createElement("div");
+  barFill.className = "waitaiminute-progress-fill";
+  barTrack.appendChild(barFill);
+
+  const label = document.createElement("div");
+  label.className = "waitaiminute-progress-label";
+
+  wrapper.appendChild(barTrack);
+  wrapper.appendChild(label);
+
+  return wrapper;
+}
+
+function updateProgressBar(wrapper: HTMLElement, count: number): void {
+  const fill = wrapper.querySelector<HTMLElement>(".waitaiminute-progress-fill");
+  const label = wrapper.querySelector<HTMLElement>(".waitaiminute-progress-label");
+  if (!fill || !label) return;
+
+  const stage = getStage(count);
+  const pct = Math.min(count / PROGRESS_MAX, 1) * 100;
+
+  fill.style.width = `${pct}%`;
+  fill.style.background = getStageFillColor(stage.intensity);
+  label.textContent = `${stage.emoji} ${count} today \u2022 ${stage.label}`;
+
+  fill.classList.toggle("waitaiminute-progress-pulse", count > PROGRESS_MAX);
+}
+
+async function initProgressBar(banner: HTMLElement): Promise<void> {
+  const bar = createProgressBar();
+  banner.appendChild(bar);
+
+  const counts = await getSubmitCounts();
+  updateProgressBar(bar, getTodayTotal(counts));
+
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes.submitCounts) {
+      const newCounts = changes.submitCounts.newValue;
+      if (newCounts) {
+        const today = new Date().toISOString().slice(0, 10);
+        const sites = newCounts.days?.[today];
+        const todayTotal = sites
+          ? Object.values(sites as Record<string, number>).reduce((s, n) => s + n, 0)
+          : 0;
+        updateProgressBar(bar, todayTotal);
+      }
+    }
+  });
+}
+
 function createBannerElement(): HTMLElement {
   const banner = document.createElement("div");
   banner.setAttribute(BANNER_ATTR, "true");
   banner.className = "waitaiminute-banner";
 
+  const message = document.createElement("div");
+  message.className = "waitaiminute-message";
+
   const icon = document.createElement("span");
   icon.className = "waitaiminute-icon";
   icon.textContent = "\u270B";
-  banner.appendChild(icon);
+  message.appendChild(icon);
 
   const text = document.createElement("span");
   text.className = "waitaiminute-text";
-  banner.appendChild(text);
+  message.appendChild(text);
+
+  banner.appendChild(message);
 
   typeText(text, getRandomMessage());
 
@@ -170,6 +276,7 @@ function injectAutoDetectBanner(config: SiteConfig): HTMLElement | null {
   const banner = createBannerElement();
   insertBannerRelativeTo(banner, ancestor, position);
   applyDailyTheme(banner);
+  initProgressBar(banner);
 
   return banner;
 }
@@ -197,6 +304,7 @@ function injectDomBanner(config: SiteConfig): HTMLElement | null {
   const banner = createBannerElement();
   insertBannerRelativeTo(banner, container, config.insertPosition ?? "before");
   applyDailyTheme(banner);
+  initProgressBar(banner);
 
   return banner;
 }

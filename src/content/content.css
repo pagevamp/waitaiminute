@@ -1,7 +1,7 @@
 .waitaiminute-banner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 8px 16px;
   margin: 4px 0;
   border-radius: 8px;
@@ -11,6 +11,13 @@
   z-index: 9999;
   transition: opacity 0.3s ease;
   border: 1px solid transparent;
+}
+
+.waitaiminute-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .waitaiminute-icon {
@@ -35,6 +42,53 @@
 
 @keyframes waitaiminute-blink {
   50% { opacity: 0; }
+}
+
+/* Progress bar */
+.waitaiminute-progress {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.waitaiminute-progress-track {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.waitaiminute-progress-track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0.2;
+  border-radius: inherit;
+}
+
+.waitaiminute-progress-fill {
+  position: relative;
+  height: 100%;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.5s ease, background 0.5s ease;
+}
+
+.waitaiminute-progress-fill.waitaiminute-progress-pulse {
+  animation: waitaiminute-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes waitaiminute-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.waitaiminute-progress-label {
+  font-size: 10px;
+  margin-top: 3px;
+  opacity: 0.7;
+  text-align: center;
 }
 
 
