@@ -54,36 +54,50 @@ export function removeBanner(): void {
   if (banner) banner.remove();
 }
 
-function parseLuminance(color: string): number | null {
-  const m = color.match(/\d+/g);
-  if (!m || m.length < 3) return null;
-  return (0.299 * Number(m[0]) + 0.587 * Number(m[1]) + 0.114 * Number(m[2])) / 255;
+interface BannerTheme {
+  light: { bg: [string, string]; text: string; border: string };
+  dark: { bg: [string, string]; text: string; border: string };
 }
 
-function applyOpaqueBackground(banner: HTMLElement): void {
-  // Use the inherited text color to determine if the theme is dark or light
-  const textLum = parseLuminance(getComputedStyle(banner).color);
-  if (textLum === null) return;
-  const expectLightBg = textLum < 0.5; // dark text → light background
+const THEMES: BannerTheme[] = [
+  { light: { bg: ["#dbeafe", "#bfdbfe"], text: "#1e3a8a", border: "#3b82f633" },
+    dark:  { bg: ["#1e3a5f", "#1e40af"], text: "#bfdbfe", border: "#3b82f633" } },
+  { light: { bg: ["#d1fae5", "#a7f3d0"], text: "#065f46", border: "#10b98133" },
+    dark:  { bg: ["#064e3b", "#065f46"], text: "#a7f3d0", border: "#10b98133" } },
+  { light: { bg: ["#ede9fe", "#ddd6fe"], text: "#4c1d95", border: "#8b5cf633" },
+    dark:  { bg: ["#3b0764", "#4c1d95"], text: "#ddd6fe", border: "#8b5cf633" } },
+  { light: { bg: ["#ccfbf1", "#99f6e4"], text: "#134e4a", border: "#14b8a633" },
+    dark:  { bg: ["#134e4a", "#115e59"], text: "#99f6e4", border: "#14b8a633" } },
+  { light: { bg: ["#fef3c7", "#fde68a"], text: "#78350f", border: "#f59e0b33" },
+    dark:  { bg: ["#451a03", "#78350f"], text: "#fde68a", border: "#f59e0b33" } },
+  { light: { bg: ["#fce7f3", "#fbcfe8"], text: "#831843", border: "#ec489933" },
+    dark:  { bg: ["#500724", "#831843"], text: "#fbcfe8", border: "#ec489933" } },
+  { light: { bg: ["#e0e7ff", "#c7d2fe"], text: "#312e81", border: "#6366f133" },
+    dark:  { bg: ["#1e1b4b", "#312e81"], text: "#c7d2fe", border: "#6366f133" } },
+];
 
-  // Walk up to find the first ancestor bg that matches the expected theme
-  let el: Element | null = banner.parentElement;
-  while (el) {
-    const bg = getComputedStyle(el).backgroundColor;
-    if (bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)") {
-      const bgLum = parseLuminance(bg);
-      if (bgLum !== null && (bgLum > 0.5) === expectLightBg) {
-        banner.style.backgroundColor = bg;
-        return;
-      }
-    }
-    el = el.parentElement;
-  }
+function isDarkMode(): boolean {
+  if (window.matchMedia("(prefers-color-scheme: dark)").matches) return true;
+  const html = document.documentElement;
+  const body = document.body;
+  if (html.classList.contains("dark") || body.classList.contains("dark")) return true;
+  if (html.getAttribute("data-theme") === "dark") return true;
+  if (html.getAttribute("data-mode") === "dark") return true;
+  return false;
+}
 
-  // Fallback: generic theme-appropriate background
-  banner.style.backgroundColor = expectLightBg
-    ? "rgb(255, 255, 255)"
-    : "rgb(32, 33, 35)";
+function getDayOfYear(): number {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  return Math.floor((now.getTime() - start.getTime()) / 86400000);
+}
+
+function applyDailyTheme(banner: HTMLElement): void {
+  const theme = THEMES[getDayOfYear() % THEMES.length];
+  const colors = isDarkMode() ? theme.dark : theme.light;
+  banner.style.background = `linear-gradient(135deg, ${colors.bg[0]}, ${colors.bg[1]})`;
+  banner.style.color = colors.text;
+  banner.style.borderColor = colors.border;
 }
 
 function createBannerElement(): HTMLElement {
@@ -155,7 +169,7 @@ function injectAutoDetectBanner(config: SiteConfig): HTMLElement | null {
 
   const banner = createBannerElement();
   insertBannerRelativeTo(banner, ancestor, position);
-  applyOpaqueBackground(banner);
+  applyDailyTheme(banner);
 
   return banner;
 }
@@ -182,7 +196,7 @@ function injectDomBanner(config: SiteConfig): HTMLElement | null {
 
   const banner = createBannerElement();
   insertBannerRelativeTo(banner, container, config.insertPosition ?? "before");
-  applyOpaqueBackground(banner);
+  applyDailyTheme(banner);
 
   return banner;
 }

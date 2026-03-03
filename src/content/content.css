@@ -10,10 +10,7 @@
   line-height: 1.4;
   z-index: 9999;
   transition: opacity 0.3s ease;
-
-  background: inherit;
-  color: inherit;
-  border: none;
+  border: 1px solid transparent;
 }
 
 .waitaiminute-icon {
