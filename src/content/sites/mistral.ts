@@ -7,4 +7,8 @@ export const mistralConfig: SiteConfig = {
     'div[contenteditable="true"]',
     "textarea",
   ],
+  submitButtonSelectors: [
+    'button[type="submit"]',
+    'form button:last-of-type',
+  ],
 };

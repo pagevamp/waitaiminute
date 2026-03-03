@@ -13,4 +13,6 @@ export interface SiteConfig {
   insertPosition?: "before" | "after";
   /** For auto-detect (floating), which Nth ancestor-with-sibling to use. Default 1. */
   siblingMatchIndex?: number;
+  /** Ordered list of CSS selectors for the submit button. First match wins. */
+  submitButtonSelectors?: string[];
 }

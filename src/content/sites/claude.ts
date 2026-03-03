@@ -9,4 +9,11 @@ export const claudeConfig: SiteConfig = {
     'div[contenteditable="true"]',
   ],
   containerSelector: "fieldset",
+  submitButtonSelectors: [
+    'button[aria-label="Send Message"]',
+    'button[aria-label="Send message"]',
+    'button[aria-label*="Send"]',
+    "fieldset button:last-of-type",
+    'button[class*="send" i]',
+  ],
 };

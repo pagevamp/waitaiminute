@@ -10,4 +10,9 @@ export const geminiConfig: SiteConfig = {
   ],
   floating: true,
   insertPosition: "after",
+  submitButtonSelectors: [
+    'button[aria-label="Send message"]',
+    ".send-button",
+    'button[mat-icon-button][aria-label="Send message"]',
+  ],
 };

@@ -24,9 +24,48 @@ body {
 .subtitle {
   font-size: 12px;
   color: #666;
+  margin-bottom: 12px;
+}
+
+/* Tab bar */
+.tab-bar {
+  display: flex;
+  gap: 6px;
   margin-bottom: 16px;
 }
 
+.tab-btn {
+  flex: 1;
+  padding: 6px 0;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 20px;
+  background: #f0f0f0;
+  color: #666;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab-btn.active {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.tab-btn:hover:not(.active) {
+  background: #e5e5e5;
+}
+
+/* Tab content */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Toggle row */
 .toggle-row {
   display: flex;
   align-items: center;
@@ -122,7 +161,154 @@ input:checked + .slider::before {
   transform: translateX(16px);
 }
 
-/* Dark mode for popup */
+/* Stats tab */
+.stats-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 10px;
+}
+
+.stats-total-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.stats-total-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+/* Date nav */
+.date-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.date-arrow {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  cursor: pointer;
+  color: #555;
+  transition: opacity 0.2s;
+}
+
+.date-arrow:hover:not(:disabled) {
+  border-color: #bbb;
+  color: #333;
+}
+
+.date-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.date-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Day section */
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.stats-label {
+  font-size: 13px;
+  color: #555;
+}
+
+.stats-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.site-list {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.site-list:empty {
+  display: none;
+}
+
+.site-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1px 0;
+}
+
+.site-name {
+  font-size: 11px;
+  color: #888;
+}
+
+.site-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: #888;
+}
+
+/* Empty state */
+.hidden {
+  display: none !important;
+}
+
+.empty-state {
+  display: none;
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  padding: 16px 0;
+}
+
+.empty-state.visible {
+  display: block;
+}
+
+/* Reset */
+.reset-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.reset-btn {
+  flex: 1;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #999;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  color: #666;
+  border-color: #bbb;
+}
+
+.reset-btn.confirm {
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
   body {
     background: #1a1a1a;
@@ -131,6 +317,20 @@ input:checked + .slider::before {
 
   .subtitle {
     color: #999;
+  }
+
+  .tab-btn {
+    background: #333;
+    color: #999;
+  }
+
+  .tab-btn.active {
+    background: #f59e0b;
+    color: #fff;
+  }
+
+  .tab-btn:hover:not(.active) {
+    background: #444;
   }
 
   .slider {
@@ -143,5 +343,63 @@ input:checked + .slider::before {
 
   .sub-label {
     color: #999;
+  }
+
+  .stats-total-row {
+    border-bottom-color: #333;
+  }
+
+  .stats-total-label {
+    color: #ccc;
+  }
+
+  .date-arrow {
+    border-color: #444;
+    color: #999;
+  }
+
+  .date-arrow:hover:not(:disabled) {
+    border-color: #666;
+    color: #ccc;
+  }
+
+  .date-label {
+    color: #ccc;
+  }
+
+  .stats-label {
+    color: #999;
+  }
+
+  .stats-value {
+    color: #e5e5e5;
+  }
+
+  .site-list {
+    border-top-color: #333;
+  }
+
+  .site-name,
+  .site-count {
+    color: #777;
+  }
+
+  .empty-state {
+    color: #666;
+  }
+
+  .reset-btn {
+    color: #777;
+    border-color: #444;
+  }
+
+  .reset-btn:hover {
+    color: #aaa;
+    border-color: #666;
+  }
+
+  .reset-btn.confirm {
+    color: #ef4444;
+    border-color: #ef4444;
   }
 }

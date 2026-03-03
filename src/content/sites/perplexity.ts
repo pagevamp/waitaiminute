@@ -8,4 +8,9 @@ export const perplexityConfig: SiteConfig = {
     "textarea.overflow-auto",
     "textarea",
   ],
+  submitButtonSelectors: [
+    'button[aria-label="Submit"]',
+    'button[aria-label="Send"]',
+    'button[type="submit"]',
+  ],
 };

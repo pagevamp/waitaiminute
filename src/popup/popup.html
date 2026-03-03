@@ -10,27 +10,59 @@
     <div class="popup">
       <h1 class="title">WaitAIMinute</h1>
       <p class="subtitle">Think first, prompt second.</p>
-      <div class="toggle-row">
-        <label class="toggle-label" for="enableToggle">Enabled</label>
-        <label class="toggle">
-          <input type="checkbox" id="enableToggle" checked />
-          <span class="slider"></span>
-        </label>
+
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="settingsTab">Settings</button>
+        <button class="tab-btn" data-tab="statsTab">Stats</button>
       </div>
-      <div class="sub-toggles" id="subToggles">
-        <div class="toggle-row sub-toggle-row">
-          <label class="toggle-label sub-label" for="messagesToggle">Reminder Messages</label>
-          <label class="toggle toggle-sm">
-            <input type="checkbox" id="messagesToggle" checked />
+
+      <div class="tab-content active" id="settingsTab">
+        <div class="toggle-row">
+          <label class="toggle-label" for="enableToggle">Enabled</label>
+          <label class="toggle">
+            <input type="checkbox" id="enableToggle" checked />
             <span class="slider"></span>
           </label>
         </div>
-        <div class="toggle-row sub-toggle-row">
-          <label class="toggle-label sub-label" for="sensitiveToggle">Sensitive Info Detection</label>
-          <label class="toggle toggle-sm">
-            <input type="checkbox" id="sensitiveToggle" checked />
-            <span class="slider"></span>
-          </label>
+        <div class="sub-toggles" id="subToggles">
+          <div class="toggle-row sub-toggle-row">
+            <label class="toggle-label sub-label" for="messagesToggle">Reminder Messages</label>
+            <label class="toggle toggle-sm">
+              <input type="checkbox" id="messagesToggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row sub-toggle-row">
+            <label class="toggle-label sub-label" for="sensitiveToggle">Sensitive Info Detection</label>
+            <label class="toggle toggle-sm">
+              <input type="checkbox" id="sensitiveToggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="statsTab">
+        <div class="stats-total-row">
+          <span class="stats-total-label">Total Queries</span>
+          <span class="stats-total-value" id="totalCount">0</span>
+        </div>
+        <div class="date-nav">
+          <button class="date-arrow" id="prevDate">&#9664;</button>
+          <span class="date-label" id="dateLabel"></span>
+          <button class="date-arrow" id="nextDate">&#9654;</button>
+        </div>
+        <div class="day-section" id="daySection">
+          <div class="stats-row">
+            <span class="stats-label">Day Total</span>
+            <span class="stats-value" id="dayTotal">0</span>
+          </div>
+          <div class="site-list" id="siteList"></div>
+        </div>
+        <div class="empty-state" id="emptyState">No queries yet</div>
+        <div class="reset-row">
+          <button class="reset-btn" id="resetTodayBtn">Reset Today</button>
+          <button class="reset-btn" id="resetAllBtn">Reset All</button>
         </div>
       </div>
     </div>

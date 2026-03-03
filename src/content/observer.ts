@@ -8,6 +8,7 @@ import {
 } from "./injector";
 import { startRotation, stopRotation } from "./rotation";
 import { startMonitoring, stopMonitoring } from "./input-monitor";
+import { startTracking, stopTracking } from "./submit-tracker";
 
 export interface FeatureFlags {
   messages: boolean;
@@ -37,6 +38,10 @@ export function startObserving(config: SiteConfig, flags?: FeatureFlags): void {
 
     if (currentFlags.sensitiveInfo && findInput(config)) {
       startMonitoring(config);
+    }
+
+    if (findInput(config)) {
+      startTracking(config);
     }
   };
 
@@ -99,6 +104,7 @@ export function stopObserving(): void {
     fallbackTimer = null;
   }
   stopMonitoring();
+  stopTracking();
   if (stopRotationFn) {
     stopRotationFn();
     stopRotationFn = null;

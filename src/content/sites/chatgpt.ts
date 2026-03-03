@@ -9,4 +9,11 @@ export const chatgptConfig: SiteConfig = {
     'form textarea[placeholder]',
   ],
   containerSelector: "form",
+  submitButtonSelectors: [
+    'button[data-testid="send-button"]',
+    'button[aria-label="Send prompt"]',
+    'button[aria-label="Send"]',
+    'form button[class*="send"]',
+    "form button:last-of-type",
+  ],
 };

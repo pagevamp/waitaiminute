@@ -8,4 +8,8 @@ export const deepseekConfig: SiteConfig = {
     'textarea[placeholder]',
     "textarea",
   ],
+  submitButtonSelectors: [
+    "#chat-input-send-button",
+    'div[class*="chat-input"] button:last-of-type',
+  ],
 };

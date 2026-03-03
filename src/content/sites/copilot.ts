@@ -8,4 +8,9 @@ export const copilotConfig: SiteConfig = {
     'cib-serp cib-action-bar textarea',
     "textarea.w-full",
   ],
+  submitButtonSelectors: [
+    'button[aria-label="Submit"]',
+    'button[aria-label="Send"]',
+    'button[type="submit"]',
+  ],
 };
